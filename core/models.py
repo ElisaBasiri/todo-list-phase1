@@ -62,3 +62,9 @@ class Task:
 
         if deadline is not None:
             self.deadline = deadline
+
+
+    def __str__(self) -> str:
+        dl = f" (Due: {self.deadline})" if self.deadline else ""
+        status_str = self.status.value.upper() if self.status else "UNKNOWN"
+        return f"[{self.task_id or '-':3}] {self.title:<40} | {status_str:6} {dl}"
