@@ -56,3 +56,26 @@ class ToDoManager:
     def list_projects(self) -> List[Project]:
         """Return list of projects sorted by ID"""
         return sorted(self.projects.values(), key=lambda p: p.project_id or 0)
+    
+    def add_task(
+        self,
+        project_id: int,
+        title: str,
+        description: str = "",
+        deadline_str: str = "",
+    ) -> Task:
+        project = self.get_project(project_id)
+        if not project:
+            raise ValueError(f"Project with ID {project_id} not found")
+
+        if len(project.tasks) >= MAX_TASKS_PER_PROJECT:
+            raise ValueError(f"Maximum number of tasks in project ({MAX_TASKS_PER_PROJECT}) has been reached")
+
+        deadline = None
+        if deadline_str.strip():
+            try:
+                deadline = date.fromisoformat(deadline_str.strip())
+            except ValueError:
+                raise ValueError("Invalid date format. Use: YYYY-MM-DD")
+
+        return project.add_task(title=title, description=description, deadline=deadline)
