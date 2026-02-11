@@ -211,3 +211,14 @@ def main():
 
         else:
             print("→ Invalid choice. Please enter 0-5.")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n\nProgram terminated by user.")
+        sys.exit(0)
+    except Exception as e:
+        print(f"\nUnexpected error:\n{e}")
+        sys.exit(1)
