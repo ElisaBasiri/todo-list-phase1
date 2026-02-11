@@ -22,6 +22,11 @@ class Task:
         task_id: Optional[int] = None,
     ):
         
+        if len(title.split()) > 30:
+            raise ValueError("Task title must not exceed 30 words")
+        if len(description.split()) > 150:
+            raise ValueError("Task description must not exceed 150 words")
+        
         self.task_id: Optional[int] = task_id
         self.title: str = title.strip()
         self.description: str = description.strip()
