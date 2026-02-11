@@ -146,3 +146,10 @@ class ToDoManager:
 
         if not project.remove_task(task_id):
             raise ValueError(f"Task with ID {task_id} not found")
+        
+
+    def list_tasks(self, project_id: int) -> List[Task]:
+        project = self.get_project(project_id)
+        if not project:
+            raise ValueError(f"Project with ID {project_id} not found")
+        return sorted(project.tasks, key=lambda t: t.task_id or 0)
