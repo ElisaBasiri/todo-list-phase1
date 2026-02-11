@@ -21,3 +21,34 @@ class ToDoManager:
         self.projects[self._next_project_id] = project
         self._next_project_id += 1
         return project
+    
+    def get_project(self, project_id: int) -> Optional[Project]:
+        return self.projects.get(project_id)
+
+    def update_project(
+        self,
+        project_id: int,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> None:
+        project = self.get_project(project_id)
+        if not project:
+            raise ValueError(f"Project with ID {project_id} not found")
+
+        if name is not None:
+            if any(p.name == name and p.project_id != project_id for p in self.projects.values()):
+                raise ValueError("Project name already exists")
+            if len(name.split()) > 30:
+                raise ValueError("Project name must not exceed 30 words")
+            project.name = name.strip()
+
+        if description is not None:
+            if len(description.split()) > 150:
+                raise ValueError("Project description must not exceed 150 words")
+            project.description = description.strip()
+
+    def delete_project(self, project_id: int) -> None:
+        """Delete project + Cascade Delete (all associated tasks are also removed)"""
+        if project_id not in self.projects:
+            raise ValueError(f"Project with ID {project_id} not found")
+        del self.projects[project_id]
