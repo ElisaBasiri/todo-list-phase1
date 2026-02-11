@@ -32,3 +32,33 @@ class Task:
         self.description: str = description.strip()
         self.status: TaskStatus = status
         self.deadline: Optional[date] = deadline
+
+
+
+    def change_status(self, new_status: TaskStatus) -> None:
+        """Change the status of the task"""
+        self.status = new_status
+
+    def update(
+        self,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        status: Optional[TaskStatus] = None,
+        deadline: Optional[date] = None,
+    ) -> None:
+        """Update one or more fields of the task"""
+        if title is not None:
+            if len(title.split()) > 30:
+                raise ValueError("Task title must not exceed 30 words")
+            self.title = title.strip()
+
+        if description is not None:
+            if len(description.split()) > 150:
+                raise ValueError("Task description must not exceed 150 words")
+            self.description = description.strip()
+
+        if status is not None:
+            self.status = status
+
+        if deadline is not None:
+            self.deadline = deadline
