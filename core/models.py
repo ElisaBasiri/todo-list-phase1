@@ -123,3 +123,6 @@ class Project:
                 del self.tasks[i]
                 return True
         return False
+    
+    def __str__(self) -> str:
+        return f"{self.name} (ID: {self.project_id}) - {len(self.tasks)} tasks"
