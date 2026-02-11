@@ -50,3 +50,29 @@ def main():
         if choice == "0":
             print("\nGoodbye! (Data is in-memory only – will be lost on exit)")
             sys.exit(0)
+
+        elif choice == "1":
+            # Create project
+            name = input("Project name (max 30 words): ").strip()
+            if not name:
+                print("→ Project name cannot be empty")
+                continue
+
+            desc = input("Description (optional, max 150 words): ").strip()
+
+            try:
+                project = manager.create_project(name, desc)
+                print(f"→ Project '{project.name}' created successfully (ID: {project.project_id})")
+            except ValueError as e:
+                print(f"Error: {e}")
+
+        elif choice == "2":
+            # List projects
+            projects = manager.list_projects()
+            if not projects:
+                print("→ No projects created yet.")
+                continue
+
+            print("\nProjects:")
+            for p in projects:
+                print(f"  {p.project_id:3d} | {p.name:<35} | {len(p.tasks)} tasks | {p.description[:50]}{'...' if len(p.description) > 50 else ''}")
