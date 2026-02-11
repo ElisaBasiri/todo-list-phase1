@@ -98,3 +98,44 @@ class ToDoManager:
 
         task.change_status(new_status)
 
+
+    def update_task(
+        self,
+        project_id: int,
+        task_id: int,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        status_str: Optional[str] = None,
+        deadline_str: Optional[str] = None,
+    ) -> None:
+        project = self.get_project(project_id)
+        if not project:
+            raise ValueError(f"Project with ID {project_id} not found")
+
+        task = project.get_task_by_id(task_id)
+        if not task:
+            raise ValueError(f"Task with ID {task_id} not found")
+
+        deadline = None
+        if deadline_str is not None:
+            if deadline_str.strip():
+                try:
+                    deadline = date.fromisoformat(deadline_str.strip())
+                except ValueError:
+                    raise ValueError("Invalid date format. Use: YYYY-MM-DD")
+            # Empty string → remove deadline
+
+        status_enum = None
+        if status_str is not None:
+            try:
+                status_enum = TaskStatus[status_str.upper()]
+            except (KeyError, ValueError):
+                raise ValueError("Invalid status. Allowed values: todo, doing, done")
+
+        task.update(
+            title=title,
+            description=description,
+            status=status_enum,
+            deadline=deadline,
+        )
+
