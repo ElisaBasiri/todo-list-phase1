@@ -108,3 +108,18 @@ class Project:
         self.tasks.append(task)
         self._next_task_id += 1
         return task
+    
+
+    def get_task_by_id(self, task_id: int) -> Optional[Task]:
+        for task in self.tasks:
+            if task.task_id == task_id:
+                return task
+        return None
+
+    def remove_task(self, task_id: int) -> bool:
+        """Remove a task from the project's task list"""
+        for i, task in enumerate(self.tasks):
+            if task.task_id == task_id:
+                del self.tasks[i]
+                return True
+        return False
