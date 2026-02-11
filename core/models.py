@@ -80,6 +80,11 @@ class Project:
         project_id: Optional[int] = None,
     ):
         
+        if len(name.split()) > 30:
+            raise ValueError("Project name must not exceed 30 words")
+        if len(description.split()) > 150:
+            raise ValueError("Project description must not exceed 150 words")
+
         self.project_id: Optional[int] = project_id
         self.name: str = name.strip()
         self.description: str = description.strip()
