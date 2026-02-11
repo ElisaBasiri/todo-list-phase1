@@ -179,3 +179,35 @@ def main():
 
             except ValueError:
                 print("→ Project ID must be a number")
+
+        elif choice == "4":
+            # Edit project
+            proj_id_str = input("Project ID to edit: ").strip()
+            try:
+                proj_id = int(proj_id_str)
+                name = input("New name (leave blank = no change): ").strip() or None
+                desc = input("New description (leave blank = no change): ").strip() or None
+
+                manager.update_project(proj_id, name, desc)
+                print("→ Project updated successfully")
+            except ValueError as e:
+                print(f"Error: {e}")
+
+        elif choice == "5":
+            # Delete project
+            proj_id_str = input("Project ID to delete: ").strip()
+            try:
+                proj_id = int(proj_id_str)
+                confirm = input(f"Delete project {proj_id} and all its tasks? (yes/no): ").strip().lower()
+                if confirm in ("yes", "y"):
+                    manager.delete_project(proj_id)
+                    print("→ Project and all tasks deleted")
+                    if current_project_id == proj_id:
+                        current_project_id = None
+                else:
+                    print("→ Delete cancelled")
+            except ValueError as e:
+                print(f"Error: {e}")
+
+        else:
+            print("→ Invalid choice. Please enter 0-5.")
