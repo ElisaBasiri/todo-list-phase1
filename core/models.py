@@ -90,3 +90,21 @@ class Project:
         self.description: str = description.strip()
         self.tasks: List[Task] = []
         self._next_task_id: int = 1
+
+
+    def add_task(
+        self,
+        title: str,
+        description: str = "",
+        deadline: Optional[date] = None,
+    ) -> Task:
+        """Add a new task to the project"""
+        task = Task(
+            title=title,
+            description=description,
+            deadline=deadline,
+            task_id=self._next_task_id,
+        )
+        self.tasks.append(task)
+        self._next_task_id += 1
+        return task
