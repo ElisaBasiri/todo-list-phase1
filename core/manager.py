@@ -139,3 +139,10 @@ class ToDoManager:
             deadline=deadline,
         )
 
+    def delete_task(self, project_id: int, task_id: int) -> None:
+        project = self.get_project(project_id)
+        if not project:
+            raise ValueError(f"Project with ID {project_id} not found")
+
+        if not project.remove_task(task_id):
+            raise ValueError(f"Task with ID {task_id} not found")
