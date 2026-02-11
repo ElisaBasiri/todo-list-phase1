@@ -76,3 +76,26 @@ def main():
             print("\nProjects:")
             for p in projects:
                 print(f"  {p.project_id:3d} | {p.name:<35} | {len(p.tasks)} tasks | {p.description[:50]}{'...' if len(p.description) > 50 else ''}")
+
+        elif choice == "3":
+            # Select project → enter task submenu
+            proj_id_str = input("Enter project ID: ").strip()
+            try:
+                proj_id = int(proj_id_str)
+                project = manager.get_project(proj_id)
+                if not project:
+                    print(f"→ Project ID {proj_id} not found")
+                    continue
+
+                current_project_id = proj_id
+                print(f"→ Entered project '{project.name}' (ID: {proj_id})")
+
+                # Task submenu loop
+                while True:
+                    print_task_menu(project.name)
+                    sub_choice = input("Your choice: ").strip().lower()
+
+                    if sub_choice == "q":
+                        current_project_id = None
+                        print("→ Back to main menu")
+                        break
