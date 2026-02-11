@@ -68,3 +68,20 @@ class Task:
         dl = f" (Due: {self.deadline})" if self.deadline else ""
         status_str = self.status.value.upper() if self.status else "UNKNOWN"
         return f"[{self.task_id or '-':3}] {self.title:<40} | {status_str:6} {dl}"
+    
+
+class Project:
+    """Model representing a project that contains multiple tasks"""
+
+    def __init__(
+        self,
+        name: str,
+        description: str = "",
+        project_id: Optional[int] = None,
+    ):
+        
+        self.project_id: Optional[int] = project_id
+        self.name: str = name.strip()
+        self.description: str = description.strip()
+        self.tasks: List[Task] = []
+        self._next_task_id: int = 1
