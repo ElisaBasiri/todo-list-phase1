@@ -52,3 +52,7 @@ class ToDoManager:
         if project_id not in self.projects:
             raise ValueError(f"Project with ID {project_id} not found")
         del self.projects[project_id]
+
+    def list_projects(self) -> List[Project]:
+        """Return list of projects sorted by ID"""
+        return sorted(self.projects.values(), key=lambda p: p.project_id or 0)
