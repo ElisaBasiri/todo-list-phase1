@@ -1,5 +1,15 @@
 from typing import Dict, List, Optional
+from datetime import date
+import os
+from dotenv import load_dotenv
+
 from .models import Project, Task, TaskStatus
+
+
+load_dotenv()
+
+MAX_PROJECTS = int(os.getenv("MAX_NUMBER_OF_PROJECT", 10))
+MAX_TASKS_PER_PROJECT = int(os.getenv("MAX_NUMBER_OF_TASK", 50))
 
 class ToDoManager:
     """Main manager for projects and tasks - In-Memory storage"""
