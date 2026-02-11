@@ -143,3 +143,39 @@ def main():
                             print("→ Task status updated successfully")
                         except ValueError as e:
                             print(f"Error: {e}")
+
+                    elif sub_choice == "d":
+                        # Edit task
+                        task_id_str = input("Task ID: ").strip()
+                        print("Leave blank for no change")
+                        title = input("New title: ").strip() or None
+                        desc = input("New description: ").strip() or None
+                        status = input("New status (todo/doing/done): ").strip().lower() or None
+                        dl = get_valid_date("New deadline (YYYY-MM-DD or empty to remove): ")
+
+                        try:
+                            manager.update_task(
+                                proj_id, int(task_id_str),
+                                title=title,
+                                description=desc,
+                                status_str=status,
+                                deadline_str=dl,
+                            )
+                            print("→ Task updated successfully")
+                        except ValueError as e:
+                            print(f"Error: {e}")
+
+                    elif sub_choice == "e":
+                        # Delete task
+                        task_id_str = input("Task ID to delete: ").strip()
+                        try:
+                            manager.delete_task(proj_id, int(task_id_str))
+                            print("→ Task deleted successfully")
+                        except ValueError as e:
+                            print(f"Error: {e}")
+
+                    else:
+                        print("→ Invalid choice")
+
+            except ValueError:
+                print("→ Project ID must be a number")
