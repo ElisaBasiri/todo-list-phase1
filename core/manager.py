@@ -79,3 +79,22 @@ class ToDoManager:
                 raise ValueError("Invalid date format. Use: YYYY-MM-DD")
 
         return project.add_task(title=title, description=description, deadline=deadline)
+    
+    def change_task_status(
+        self, project_id: int, task_id: int, status_str: str
+    ) -> None:
+        project = self.get_project(project_id)
+        if not project:
+            raise ValueError(f"Project with ID {project_id} not found")
+
+        task = project.get_task_by_id(task_id)
+        if not task:
+            raise ValueError(f"Task with ID {task_id} not found in project")
+
+        try:
+            new_status = TaskStatus[status_str.upper()]
+        except (KeyError, ValueError):
+            raise ValueError("Invalid status. Allowed values: todo, doing, done")
+
+        task.change_status(new_status)
+
