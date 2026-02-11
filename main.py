@@ -99,3 +99,47 @@ def main():
                         current_project_id = None
                         print("→ Back to main menu")
                         break
+
+                    elif sub_choice == "a":
+                        # Add task
+                        title = input("Task title (max 30 words): ").strip()
+                        if not title:
+                            print("→ Title cannot be empty")
+                            continue
+
+                        desc = input("Description (optional): ").strip()
+                        deadline_str = get_valid_date("Deadline (YYYY-MM-DD or empty): ")
+
+                        try:
+                            task = manager.add_task(
+                                project_id=proj_id,
+                                title=title,
+                                description=desc,
+                                deadline_str=deadline_str or "",
+                            )
+                            print(f"→ Task '{task.title}' added (ID: {task.task_id})")
+                        except ValueError as e:
+                            print(f"Error: {e}")
+
+                    elif sub_choice == "b":
+                        # List tasks
+                        tasks = manager.list_tasks(proj_id)
+                        if not tasks:
+                            print("→ No tasks in this project yet.")
+                            continue
+
+                        print(f"\nTasks in '{project.name}':")
+                        for t in tasks:
+                            dl = f" | Due: {t.deadline}" if t.deadline else ""
+                            print(f"  {t.task_id:3d} | {t.title:<40} | {t.status.value.upper():<6}{dl}")
+
+                    elif sub_choice == "c":
+                        # Change status
+                        task_id_str = input("Task ID: ").strip()
+                        status_input = input("New status (todo / doing / done): ").strip().lower()
+
+                        try:
+                            manager.change_task_status(proj_id, int(task_id_str), status_input)
+                            print("→ Task status updated successfully")
+                        except ValueError as e:
+                            print(f"Error: {e}")
