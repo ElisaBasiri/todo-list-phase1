@@ -1,9 +1,3 @@
-
-"""
-ToDo List - Phase 2 (Relational Database)
-CLI similar to Phase 1 with while loop and text menus
-"""
-
 import sys
 from datetime import date
 

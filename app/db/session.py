@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from os import getenv
 from dotenv import load_dotenv
 
-# همیشه .env را لود کن (حتی اگر قبلاً لود شده باشد)
+
 load_dotenv()
 
 DATABASE_URL = getenv("DATABASE_URL")
