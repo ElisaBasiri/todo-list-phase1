@@ -6,15 +6,20 @@ class ServiceError(Exception):
 
 
 class ValidationError(ServiceError):
-    """Raised when input data fails validation rules (e.g. too many words, empty required field)"""
+    """Raised when input data fails validation rules"""
     pass
 
 
 class NotFoundError(ServiceError):
-    """Raised when a requested entity (project/task) does not exist"""
+    """Raised when a requested entity is not found"""
     pass
 
 
 class LimitExceededError(ServiceError):
-    """Raised when a limit (max projects, max tasks per project, etc.) is exceeded"""
-    pass 
+    """Raised when a configured limit is exceeded"""
+    pass
+
+
+class DuplicateError(ServiceError):
+    """Raised when trying to create/update with duplicate unique value (e.g. project name)"""
+    pass
