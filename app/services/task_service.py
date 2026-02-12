@@ -150,3 +150,13 @@ class TaskService:
     def get_overdue_tasks(self) -> List[Task]:
         """Used for auto-closing overdue tasks job"""
         return self.task_repo.get_overdue_tasks()
+    
+    def close_task(self, task_id: int) -> Task:
+        task = self.update_task(
+            task_id=task_id,
+            status_str="done"
+        )
+        task.closed_at = date.today()
+        self.task_repo.db.commit()
+        self.task_repo.db.refresh(task)
+        return task
