@@ -10,14 +10,15 @@ from app.exceptions.service_exceptions import (
     NotFoundError,
     LimitExceededError
 )
-import os
 from dotenv import load_dotenv
+import os
 
-load_dotenv()
+load_dotenv(override=True)
 
+# Read all constraints from .env
 MAX_TASKS_PER_PROJECT = int(os.getenv("MAX_NUMBER_OF_TASK", 50))
-MAX_WORDS_TASK_TITLE = 30
-MAX_WORDS_TASK_DESC = 150
+MAX_WORDS_TASK_TITLE   = int(os.getenv("MAX_WORDS_TASK_TITLE",   30))
+MAX_WORDS_TASK_DESC    = int(os.getenv("MAX_WORDS_TASK_DESC",    150))
 
 
 class TaskService:
@@ -30,19 +31,25 @@ class TaskService:
         self.project_repo = project_repo
 
     def _validate_task_title(self, title: str) -> None:
-        if not title.strip():
+        title = (title or "").strip()
+        if not title:
             raise ValidationError("Task title cannot be empty")
 
-        words = title.strip().split()
-        if len(words) > MAX_WORDS_TASK_TITLE:
-            raise ValidationError(f"Task title must not exceed {MAX_WORDS_TASK_TITLE} words")
+        words_count = len(title.split())
+        if words_count > MAX_WORDS_TASK_TITLE:
+            raise ValidationError(
+                f"Task title must not exceed {MAX_WORDS_TASK_TITLE} words"
+            )
 
     def _validate_task_description(self, description: str) -> None:
-        words = description.strip().split()
-        if len(words) > MAX_WORDS_TASK_DESC:
-            raise ValidationError(f"Task description must not exceed {MAX_WORDS_TASK_DESC} words")
+        desc = (description or "").strip()
+        words_count = len(desc.split())
+        if words_count > MAX_WORDS_TASK_DESC:
+            raise ValidationError(
+                f"Task description must not exceed {MAX_WORDS_TASK_DESC} words"
+            )
 
-    def _validate_deadline(self, deadline_str: Optional[str]) -> Optional[date]:
+    def _parse_and_validate_deadline(self, deadline_str: Optional[str]) -> Optional[date]:
         if not deadline_str or not deadline_str.strip():
             return None
         try:
@@ -62,21 +69,21 @@ class TaskService:
         if not project:
             raise NotFoundError(f"Project with ID {project_id} not found")
 
-        # چک محدودیت تعداد تسک‌ها
-        if self.task_repo.count_tasks_in_project(project_id) >= MAX_TASKS_PER_PROJECT:
+        task_count = self.task_repo.count_tasks_in_project(project_id)
+        if task_count >= MAX_TASKS_PER_PROJECT:
             raise LimitExceededError(
-                f"Maximum number of tasks in project ({MAX_TASKS_PER_PROJECT}) has been reached"
+                f"Maximum number of tasks in this project ({MAX_TASKS_PER_PROJECT}) has been reached"
             )
 
         self._validate_task_title(title)
         self._validate_task_description(description)
 
-        deadline = self._validate_deadline(deadline_str)
+        deadline = self._parse_and_validate_deadline(deadline_str)
 
         try:
             status = TaskStatus[status_str.upper()]
         except (KeyError, ValueError):
-            raise ValidationError("Invalid status. Allowed: todo, doing, done")
+            raise ValidationError("Invalid status. Allowed values: todo, doing, done")
 
         return self.task_repo.create_task(
             project_id=project_id,
@@ -111,14 +118,14 @@ class TaskService:
             try:
                 status = TaskStatus[status_str.upper()]
             except (KeyError, ValueError):
-                raise ValidationError("Invalid status. Allowed: todo, doing, done")
+                raise ValidationError("Invalid status. Allowed values: todo, doing, done")
 
-        deadline = self._validate_deadline(deadline_str)
+        deadline = self._parse_and_validate_deadline(deadline_str)
 
         return self.task_repo.update_task(
             task_id=task_id,
-            title=title.strip() if title else None,
-            description=description.strip() if description else None,
+            title=title.strip() if title is not None else None,
+            description=description.strip() if description is not None else None,
             status=status,
             deadline=deadline,
         )
@@ -127,7 +134,7 @@ class TaskService:
         try:
             status = TaskStatus[status_str.upper()]
         except (KeyError, ValueError):
-            raise ValidationError("Invalid status. Allowed: todo, doing, done")
+            raise ValidationError("Invalid status. Allowed values: todo, doing, done")
 
         return self.task_repo.change_task_status(task_id, status)
 
@@ -141,5 +148,5 @@ class TaskService:
         return self.task_repo.get_tasks_by_project(project_id)
 
     def get_overdue_tasks(self) -> List[Task]:
-        """برای استفاده در job خودکار بستن تسک‌های عقب‌افتاده"""
-        return self.task_repo.get_overdue_tasks() 
+        """Used for auto-closing overdue tasks job"""
+        return self.task_repo.get_overdue_tasks()

@@ -8,14 +8,15 @@ from app.exceptions.service_exceptions import (
     DuplicateError,
     LimitExceededError
 )
-import os
 from dotenv import load_dotenv
+import os
 
-load_dotenv()
+load_dotenv(override=True)
 
+# Read all constraints from .env
 MAX_PROJECTS = int(os.getenv("MAX_NUMBER_OF_PROJECT", 10))
-MAX_WORDS_PROJECT_NAME = 30
-MAX_WORDS_PROJECT_DESC = 150
+MAX_WORDS_PROJECT_NAME = int(os.getenv("MAX_WORDS_PROJECT_NAME", 30))
+MAX_WORDS_PROJECT_DESC = int(os.getenv("MAX_WORDS_PROJECT_DESC", 150))
 
 
 class ProjectService:
@@ -23,31 +24,36 @@ class ProjectService:
         self.project_repo = project_repo
 
     def _validate_project_name(self, name: str, exclude_id: Optional[int] = None) -> None:
-        """نام پروژه نباید تکراری باشد و محدودیت طول کلمه داشته باشد"""
-        if not name.strip():
+        name = (name or "").strip()
+        if not name:
             raise ValidationError("Project name cannot be empty")
 
-        words = name.strip().split()
-        if len(words) > MAX_WORDS_PROJECT_NAME:
-            raise ValidationError(f"Project name must not exceed {MAX_WORDS_PROJECT_NAME} words")
+        words_count = len(name.split())
+        if words_count > MAX_WORDS_PROJECT_NAME:
+            raise ValidationError(
+                f"Project name must not exceed {MAX_WORDS_PROJECT_NAME} words"
+            )
 
-        existing = self.project_repo.get_project_by_name(name.strip())
+        existing = self.project_repo.get_project_by_name(name)
         if existing and existing.id != exclude_id:
             raise DuplicateError(f"Project name '{name}' already exists")
 
     def _validate_project_description(self, description: str) -> None:
-        words = description.strip().split()
-        if len(words) > MAX_WORDS_PROJECT_DESC:
-            raise ValidationError(f"Project description must not exceed {MAX_WORDS_PROJECT_DESC} words")
+        desc = (description or "").strip()
+        words_count = len(desc.split())
+        if words_count > MAX_WORDS_PROJECT_DESC:
+            raise ValidationError(
+                f"Project description must not exceed {MAX_WORDS_PROJECT_DESC} words"
+            )
 
     def create_project(self, name: str, description: str = "") -> Project:
-        # اعتبارسنجی‌های فاز ۱
         self._validate_project_name(name)
         self._validate_project_description(description)
 
-        # چک محدودیت تعداد پروژه‌ها
         if self.project_repo.count_projects() >= MAX_PROJECTS:
-            raise LimitExceededError(f"Maximum number of projects ({MAX_PROJECTS}) has been reached")
+            raise LimitExceededError(
+                f"Maximum number of projects ({MAX_PROJECTS}) has been reached"
+            )
 
         return self.project_repo.create_project(name.strip(), description.strip())
 
@@ -71,8 +77,8 @@ class ProjectService:
 
         return self.project_repo.update_project(
             project_id=project_id,
-            name=name.strip() if name else None,
-            description=description.strip() if description else None
+            name=name.strip() if name is not None else None,
+            description=description.strip() if description is not None else None,
         )
 
     def delete_project(self, project_id: int) -> None:
@@ -82,4 +88,4 @@ class ProjectService:
         return self.project_repo.list_projects()
 
     def get_project_by_name(self, name: str) -> Optional[Project]:
-        return self.project_repo.get_project_by_name(name) 
+        return self.project_repo.get_project_by_name((name or "").strip())
