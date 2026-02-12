@@ -1,3 +1,9 @@
+"""
+    Deprecated: This CLI is deprecated. Use the FastAPI API instead.
+"""
+
+
+
 import sys
 from datetime import date
 
@@ -13,6 +19,18 @@ from app.exceptions.service_exceptions import (
     LimitExceededError
 )
 
+
+import warnings
+
+# At the top of the file or before main logic
+warnings.warn(
+    "WARNING: CLI interface is deprecated and will be removed in the next release. Please use the FastAPI HTTP interface instead.",
+    DeprecationWarning,
+    stacklevel=2
+)
+
+# Or print it
+print("WARNING: CLI interface is deprecated. Use API endpoints instead.")
 
 def print_header():
     print("\n" + "=" * 60)
