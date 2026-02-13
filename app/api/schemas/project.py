@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional, List
-from app.schemas.task import TaskResponse  # Forward ref if needed
+from app.api.schemas.task import TaskResponse  # Forward ref if needed
 
 class ProjectCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=100, description="Name of the project")
