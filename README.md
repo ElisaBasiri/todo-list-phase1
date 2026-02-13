@@ -55,14 +55,15 @@ Git
 
 Installation and Setup Step by Step
 1. Clone the Project
+
 Bashgit clone https://github.com/ElisaBasiri/todo-list-phase1.git
-cd todo-list-phase1
+/cd todo-list-phase1/
 2. Install Dependencies
-Bashpoetry install
+/poetry install/
 This installs all dependencies (including FastAPI, Uvicorn, Pydantic, SQLAlchemy, Alembic, APScheduler, etc.).
 3. Configure .env File
 Copy the example file and edit the values:
-Bashcp .env.example .env
+/cp .env.example .env/
 Suggested .env content:
 env# Database (change password!)
 DATABASE_URL=postgresql://todolist_user:your_secure_password@localhost:5433/todolist_db
@@ -79,15 +80,15 @@ SQLALCHEMY_ECHO=false
 API_VERSION=v1
 Warning: Change the database password immediately.
 4. Start PostgreSQL Database
-Bashdocker compose up -d
+/docker compose up -d/
 Check if the container is running:
 Bashdocker compose ps
 The database is mapped to port 5433 to avoid conflicts with local PostgreSQL.
 5. Apply Database Migrations (Alembic)
-Bashpoetry run alembic upgrade head
+/poetry run alembic upgrade head/
 If it fails, ensure the database is running and DATABASE_URL is correct.
 6. Run FastAPI Server (Web API) – Recommended Method
-Bashpoetry run uvicorn app.main_api:app --reload
+/poetry run python main.py api/
 
 Server address: http://127.0.0.1:8000/api/v1/
 Swagger docs: http://127.0.0.1:8000/docs
@@ -96,13 +97,13 @@ Redoc docs: http://127.0.0.1:8000/redoc
 This supports async endpoints for better performance.
 7. Run CLI (Command Line Interface) – Deprecated Method
 Important Warning: The CLI is deprecated in Phase 3 and will be removed in future releases. Use the Web API instead. A deprecation warning will be displayed on startup.
-Bashpoetry run python main.py
+poetry run python main.py
 After running, you will see:
 textWARNING: CLI interface is deprecated and will be removed in the next release. Please use the FastAPI HTTP interface instead.
 Then the text menu from previous phases will appear.
 8. Run Scheduler (Auto-Close Overdue Tasks)
 Run in a separate terminal:
-Bashpoetry run python -m app.commands.scheduler
+poetry run python -m app.commands.scheduler
 This process checks and closes overdue tasks every 15 minutes. For quick testing, change the interval in app/commands/scheduler.py to every(30).seconds.do(job).
 Useful CLI Commands (Deprecated)
 After running poetry run python main.py and seeing the deprecation warning, the menu appears:
@@ -172,3 +173,4 @@ texttodo-list-phase1/
 └── README.md
 This structure follows Layered Architecture: API → Service → Repository → DB.
 The project is ready! If you have questions or need changes, raise an issue on the repo.
+
