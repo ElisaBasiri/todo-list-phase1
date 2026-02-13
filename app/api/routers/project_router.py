@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
-from app.application.services.project_service import ProjectService
-from app.schemas.project import ProjectCreate, ProjectUpdate, ProjectResponse
-from app.infrastructure.repositories.project_repository import ProjectRepository
-from app.infrastructure.db.session import get_db  # From phase 2, assuming it exists
+from app.services.project_service import ProjectService
+from app.api.schemas.project import ProjectCreate, ProjectUpdate, ProjectResponse
+from app.repositories.project_repository import ProjectRepository
+from app.db.session import get_db  
 from sqlalchemy.orm import Session
 
 router = APIRouter()
